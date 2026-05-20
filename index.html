@@ -3,442 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NikoTIN - Помощь при отказе от вредных привычек</title>
+    <title>ClearMind Core</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- ЭКРАН 1: ВЫБОР ТЕМЫ -->
-    <div id="themeScreen" class="screen active">
-        <div class="theme-container">
-            <h1>Выбери тему</h1>
-            <div class="theme-buttons">
-                <button class="theme-btn light-theme" onclick="setTheme('light')">
-                    <span class="theme-icon">☀️</span>
-                    <span>Светлая</span>
-                </button>
-                <button class="theme-btn dark-theme" onclick="setTheme('dark')">
-                    <span class="theme-icon">🌙</span>
-                    <span>Тёмная</span>
-                </button>
+<body class="dark-theme">
+
+    <div class="app-container">
+        
+        <div id="tutorial-overlay" class="tutorial-overlay"></div>
+
+        <button id="theme-toggle" class="theme-toggle-btn">🌓</button>
+
+        <div id="app-robot" class="robot-container">
+            <div class="robot-head" id="robot-head-element">
+                <div class="robot-outfit-layer" id="robot-outfit-visual"></div>
+                <div class="robot-eyes">
+                    <div class="eye left-eye"></div>
+                    <div class="eye right-eye"></div>
+                </div>
+                <div class="robot-smile"></div>
+            </div>
+            <div class="robot-body"></div>
+            <div class="robot-bubble" id="robot-bubble">Система запущена. Требуется первичная настройка профиля.</div>
+        </div>
+
+        <div id="robot-custom-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h3>Модификация ассистента</h3>
+                <div class="input-block">
+                    <input type="text" id="custom-robot-name-input" placeholder="Имя робота">
+                </div>
+                <p class="modal-label-mini">Выберите наряд (интерфейс):</p>
+                <div class="outfit-selector-grid">
+                    <button class="outfit-btn active-outfit" data-outfit="classic">Классика</button>
+                    <button class="outfit-btn" data-outfit="neon">Кибер-неон</button>
+                    <button class="outfit-btn" data-outfit="carbon">Углерод</button>
+                </div>
+                <button id="btn-close-robot-modal" class="wizard-next-btn">Сохранить изменения</button>
             </div>
         </div>
-    </div>
 
-    <!-- ЭКРАН 2: ПРИВЕТСТВИЕ С РОБОТОМ -->
-    <div id="welcomeScreen" class="screen">
-        <div class="welcome-container">
-            <div class="robot-container">
-                <svg class="robot flying" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Голова -->
-                    <rect x="30" y="10" width="40" height="40" rx="5" class="robot-head"/>
-                    <!-- Левый глаз -->
-                    <circle cx="40" cy="25" r="4" class="robot-eye"/>
-                    <circle cx="40" cy="25" r="2" class="robot-pupil"/>
-                    <!-- Правый глаз (моргает) -->
-                    <circle cx="60" cy="25" r="4" class="robot-eye"/>
-                    <circle cx="60" cy="25" r="2" class="robot-pupil blink"/>
-                    <!-- Рот (улыбка) -->
-                    <path d="M 42 38 Q 50 42 58 38" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" class="robot-smile"/>
-                    <!-- Туловище -->
-                    <rect x="35" y="52" width="30" height="35" rx="3" class="robot-body"/>
-                    <!-- Левая рука (машет) -->
-                    <g class="robot-arm-left">
-                        <rect x="20" y="58" width="15" height="8" rx="4" class="robot-limb"/>
-                        <circle cx="20" cy="62" r="5" class="robot-hand"/>
-                    </g>
-                    <!-- Правая рука -->
-                    <g class="robot-arm-right">
-                        <rect x="65" y="58" width="15" height="8" rx="4" class="robot-limb"/>
-                        <circle cx="80" cy="62" r="5" class="robot-hand"/>
-                    </g>
-                    <!-- Левая нога -->
-                    <rect x="40" y="87" width="8" height="20" rx="4" class="robot-limb"/>
-                    <!-- Правая нога -->
-                    <rect x="52" y="87" width="8" height="20" rx="4" class="robot-limb"/>
-                </svg>
+        <div id="daily-check-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h3>Новый день. Как твоё состояние?</h3>
+                <button class="modal-opt-btn" data-day-choice="continue">Продолжаем снижать темп</button>
+                <button class="modal-opt-btn" data-day-choice="hold">Остановимся на текущем уровне</button>
+                <button class="modal-opt-btn" data-day-choice="reset">Сорвался, начать план сначала</button>
             </div>
+        </div>
+
+        <div id="setup-wizard">
+            <div id="step-robot-name" class="setup-step active">
+                <div class="input-block">
+                    <p class="wizard-label">Как вы назовете своего цифрового ассистента?</p>
+                    <input type="text" id="robot-name-input" placeholder="Например: Нео" autocomplete="off">
+                    <button id="btn-step-0" class="wizard-next-btn">Далее</button>
+                </div>
+            </div>
+
+            <div id="step-name" class="setup-step">
+                <div class="input-block">
+                    <p class="wizard-label">Назовите ваше имя для калибровки системы:</p>
+                    <input type="text" id="user-name-input" placeholder="Ваше имя" autocomplete="off">
+                    <button id="btn-step-1" class="wizard-next-btn">Далее</button>
+                </div>
+            </div>
+
+            <div id="step-habit" class="setup-step">
+                <div class="vertical-options">
+                    <p class="wizard-label">Какую пагубную привычку мы берем под контроль?</p>
+                    <button class="menu-opt-btn" data-habit="vape">Электронные сигареты / Вейп</button>
+                    <button class="menu-opt-btn" data-habit="cigarettes">Классические сигареты</button>
+                    <button id="btn-step-2" class="wizard-next-btn">Далее</button>
+                </div>
+            </div>
+
+            <div id="step-puffs" class="setup-step">
+                <div class="input-block">
+                    <p class="wizard-label" id="label-puffs-count">Сколько затяжек в день вы делаете в среднем?</p>
+                    <input type="number" id="user-puffs-input" placeholder="Например: 250" min="1">
+                    <button id="btn-step-3" class="wizard-next-btn">Далее</button>
+                </div>
+            </div>
+
+            <div id="step-years" class="setup-step">
+                <div class="vertical-options">
+                    <p class="wizard-label">На протяжении какого времени вы курите?</p>
+                    <button class="menu-opt-btn" data-years="less-6m">Меньше полугода</button>
+                    <button class="menu-opt-btn" data-years="about-1y">Около года</button>
+                    <button class="menu-opt-btn" data-years="about-2y">Около двух лет</button>
+                    <button class="menu-opt-btn" data-years="about-5y">Около 5 лет</button>
+                    <button class="menu-opt-btn" data-years="more-5y">Более 5 лет</button>
+                    <button id="btn-step-4" class="wizard-next-btn">Далее</button>
+                </div>
+            </div>
+
+            <div id="step-morning" class="setup-step">
+                <div class="vertical-options">
+                    <p class="wizard-label">Через сколько времени после просыпания вы выкуриваете первую дозу?</p>
+                    <button class="menu-opt-btn" data-morning="immediately">Сразу (в первые 5 минут)</button>
+                    <button class="menu-opt-btn" data-morning="half-hour">В течение 30 минут</button>
+                    <button class="menu-opt-btn" data-morning="later">Через час и более</button>
+                    <button id="btn-step-5" class="wizard-next-btn">Далее</button>
+                </div>
+            </div>
+
+            <div id="step-method" class="setup-step">
+                <div class="vertical-options">
+                    <button class="menu-opt-btn" data-method="gradual">📈 Постепенное снижение лимита</button>
+                    <button class="menu-opt-btn" data-method="abrupt">🛑 Полный резкий отказ</button>
+                    
+                    <div id="abrupt-danger-card" class="danger-notice-card hidden">
+                        <p>Резкий отказ без подготовки увеличивает риск срыва. Вы уверены в жестком решении?</p>
+                        <button id="btn-approve-abrupt" class="approve-red-btn">Да, уверен</button>
+                    </div>
+
+                    <button id="btn-finalize-setup" class="wizard-next-btn hidden">Запустить систему</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="app-content-modules" class="hidden">
             
-            <div class="welcome-text">
-                <h2>Привет! 👋</h2>
-                <p>Как мне тебя называть?</p>
+            <div id="view-hub" class="app-view-panel active">
+                <header class="view-header">
+                    <h2 id="display-user-name">Клиент</h2>
+                    <p id="display-plan-details">Синхронизация плана...</p>
+                </header>
+
+                <div class="core-timer-widget">
+                    <div class="timer-digits" id="timer-time-output">00ч : 00м : 00с</div>
+                    <button id="timer-action-trigger" class="compact-timer-btn">Начать сессию</button>
+                    <div class="record-meta">
+                        <span>Текущий рекорд чистоты:</span>
+                        <strong id="display-best-record">00ч : 00м : 00с</strong>
+                    </div>
+                </div>
+
+                <div class="puff-trigger-area">
+                    <button id="main-puff-circle" class="interactive-puffs-circle">
+                        <span id="live-puffs-counter">0</span>
+                        <small id="label-live-counter">затяжек сегодня</small>
+                    </button>
+                    <button id="btn-undo-action" class="action-rollback-btn">Отменить ошибочную затяжку</button>
+                </div>
             </div>
 
-            <input type="text" id="nameInput" class="name-input" placeholder="Введи своё имя..." maxlength="20">
-            
-            <button class="btn-primary" onclick="startJourney()">Начать путь</button>
-        </div>
-    </div>
+            <div id="view-stats" class="app-view-panel">
+                <div class="stats-container">
+                    <h3>Статистика прогресса</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-num" id="stat-total-puffs">0</span>
+                            <span class="stat-desc" id="label-stat-total">Всего затяжек</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-num" id="stat-limit-overflows">0</span>
+                            <span class="stat-desc">Превышений лимита</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-num" id="stat-games-won">0</span>
+                            <span class="stat-desc">Побед в играх</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-wrapper">
+                        <p class="chart-title">Аналитика за последние дни</p>
+                        <div class="bar-chart" id="analytics-bar-chart">
+                            </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- ЭКРАН 3: ВЫБОР ПРИВЫЧКИ -->
-    <div id="habitScreen" class="screen">
-        <div class="habits-container">
-            <h2>От какой привычки хочешь избавиться?</h2>
-            <p class="subtitle">Выбери одну</p>
-            
-            <div class="habits-grid">
-                <button class="habit-card" onclick="selectHabit('vape')">
-                    <span class="habit-emoji">🚭</span>
-                    <span class="habit-name">Электронные сигареты</span>
+            <div id="view-games" class="app-view-panel">
+                <div class="games-hub">
+                    
+                    <div class="game-card-box">
+                        <h4>Монетка решений</h4>
+                        <div class="coin-scene">
+                            <div id="coin-3d-element" class="business-coin">
+                                <div class="coin-face coin-front">ОРЁЛ</div>
+                                <div class="coin-face coin-back">РЕШКА</div>
+                            </div>
+                        </div>
+                        <div class="coin-side-selector">
+                            <button class="side-btn active-side" data-choice-side="heads">Орёл</button>
+                            <button class="side-btn" data-choice-side="tails">Решка</button>
+                        </div>
+                        <button id="btn-start-coin-flip" class="execute-game-btn">Подкинуть</button>
+                        <p id="coin-game-feedback" class="game-result-label"></p>
+                    </div>
+
+                    <div class="game-card-box word-game-layout">
+                        <h4>Концентрация: Собери слово</h4>
+                        <p class="word-hint">Соединяйте буквы строго по порядку слова:</p>
+                        
+                        <div class="word-letters-grid" id="word-matrix"></div>
+                        <div class="word-current-assembly" id="current-word-building">---</div>
+                        
+                        <div class="word-game-controls">
+                            <button id="btn-clear-word-selection" class="word-reset-btn">Сброс</button>
+                            <button id="btn-skip-word" class="word-reset-btn">Другое</button>
+                            <button id="btn-submit-word-check" class="execute-game-btn">Проверить</button>
+                        </div>
+                        <p id="word-game-feedback" class="game-result-label"></p>
+                    </div>
+
+                </div>
+            </div>
+
+            <nav class="bottom-navigation-bar">
+                <button class="nav-tab-item active-tab" data-target-view="view-hub">
+                    <span class="nav-icon">📱</span>
+                    <span class="nav-text">Хаб</span>
                 </button>
-                <button class="habit-card disabled" title="Скоро доступно">
-                    <span class="habit-emoji">🚬</span>
-                    <span class="habit-name">Обычные сигареты</span>
-                    <span class="coming-soon">Скоро</span>
+                <button class="nav-tab-item" data-target-view="view-stats">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Статистика</span>
                 </button>
-                <button class="habit-card disabled" title="Скоро доступно">
-                    <span class="habit-emoji">☕</span>
-                    <span class="habit-name">Кофеин</span>
-                    <span class="coming-soon">Скоро</span>
+                <button class="nav-tab-item" data-target-view="view-games">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-text">Игры</span>
                 </button>
-                <button class="habit-card disabled" title="Скоро доступно">
-                    <span class="habit-emoji">📱</span>
-                    <span class="habit-name">Социальные сети</span>
-                    <span class="coming-soon">Скоро</span>
-                </button>
-            </div>
-        </div>
-    </div>
+            </nav>
 
-    <!-- ЭКРАН 4: ОПРОСНИК -->
-    <div id="quizScreen" class="screen">
-        <div class="quiz-container">
-            <div class="quiz-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <span class="progress-text" id="progressText">1/4</span>
-            </div>
-
-            <div id="quizContent" class="quiz-content">
-                <!-- Вопросы будут добавлены JS -->
-            </div>
-
-            <div class="quiz-buttons">
-                <button class="btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display:none;">Назад</button>
-                <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">Далее</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 5: МОДАЛЬНОЕ ОКНО ПРЕДУПРЕЖДЕНИЯ -->
-    <div id="warningModal" class="modal hidden">
-        <div class="modal-content warning">
-            <button class="modal-close" onclick="closeWarning()">✕</button>
-            <h3>⚠️ Важно!</h3>
-            <p>Вы выбрали <strong>резкое брсоание</strong>. Это может быть сложнее психологически.</p>
-            <p class="warning-text">Могут возникнуть:</p>
-            <ul>
-                <li>Раздражительность</li>
-                <li>Бессонница</li>
-                <li>Тревога</li>
-                <li>Сильная тяга</li>
-            </ul>
-            <p class="warning-question">Вы уверены в своём выборе?</p>
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="closeWarning()">Назад</button>
-                <button class="btn-primary danger" onclick="confirmWarning()">Да, готов!</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 6: ГЛАВНЫЙ ЭКРАН -->
-    <div id="mainScreen" class="screen">
-        <!-- Робот-помощник (летает в углу) -->
-        <div class="robot-helper">
-            <svg class="robot-mini flying" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                <rect x="30" y="10" width="40" height="40" rx="5" class="robot-head"/>
-                <circle cx="40" cy="25" r="4" class="robot-eye"/>
-                <circle cx="40" cy="25" r="2" class="robot-pupil"/>
-                <circle cx="60" cy="25" r="4" class="robot-eye"/>
-                <circle cx="60" cy="25" r="2" class="robot-pupil blink"/>
-                <path d="M 42 38 Q 50 42 58 38" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" class="robot-smile"/>
-                <rect x="35" y="52" width="30" height="35" rx="3" class="robot-body"/>
-                <rect x="20" y="58" width="15" height="8" rx="4" class="robot-limb"/>
-                <circle cx="20" cy="62" r="5" class="robot-hand"/>
-                <rect x="65" y="58" width="15" height="8" rx="4" class="robot-limb"/>
-                <circle cx="80" cy="62" r="5" class="robot-hand"/>
-                <rect x="40" y="87" width="8" height="20" rx="4" class="robot-limb"/>
-                <rect x="52" y="87" width="8" height="20" rx="4" class="robot-limb"/>
-            </svg>
-            <div class="robot-tooltip">Нажми на кружок! 👇</div>
         </div>
 
-        <!-- Хедер с именем и датой -->
-        <div class="main-header">
-            <div class="header-left">
-                <h2 id="userName">Привет!</h2>
-                <p id="dayCounter">День 1</p>
-            </div>
-            <div class="header-right">
-                <div class="timer-display">
-                    <span id="timerValue">00:00</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ВКЛАДКА 1: СЧЁТЧИК -->
-        <div id="tabCounter" class="tab-content active">
-            <div class="counter-section">
-                <div class="large-circle" id="dragCounter" onclick="addPuff()">
-                    <div class="circle-inner">
-                        <span class="circle-number" id="puffCount">0</span>
-                        <span class="circle-label">затяжек</span>
-                    </div>
-                    <div class="circle-waves"></div>
-                </div>
-                
-                <p class="counter-hint">Нажми на кружок, чтобы добавить затяжку</p>
-
-                <div class="counter-actions">
-                    <button class="btn-small error" onclick="undoPuff()">↶ Отменить</button>
-                    <button class="btn-small warning" onclick="resetDay()">🔄 Новый день</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ВКЛАДКА 2: СТАТИСТИКА -->
-        <div id="tabStats" class="tab-content">
-            <div class="stats-container">
-                <div class="stat-card">
-                    <span class="stat-emoji">💰</span>
-                    <div class="stat-info">
-                        <p class="stat-label">Сэкономлено</p>
-                        <p class="stat-value" id="savedMoney">0 ₽</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-emoji">⏱️</span>
-                    <div class="stat-info">
-                        <p class="stat-label">Время без</p>
-                        <p class="stat-value" id="timeSaved">0ч</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-emoji">🔥</span>
-                    <div class="stat-info">
-                        <p class="stat-label">Текущая серия</p>
-                        <p class="stat-value" id="streak">0 дней</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-emoji">📊</span>
-                    <div class="stat-info">
-                        <p class="stat-label">Сегодня затяжек</p>
-                        <p class="stat-value" id="todayPuffs">0</p>
-                    </div>
-                </div>
-
-                <div class="chart-placeholder">
-                    📈 График прогресса (вскоре)
-                </div>
-            </div>
-        </div>
-
-        <!-- ВКЛАДКА 3: СОВЕТЫ -->
-        <div id="tabAdvice" class="tab-content">
-            <div class="advice-container">
-                <div class="advice-card">
-                    <h3>💡 Совет дня</h3>
-                    <p id="adviceText">Когда появляется тяга, выпей стакан воды и помедитируй 5 минут.</p>
-                    <button class="btn-small" onclick="nextAdvice()">Ещё совет →</button>
-                </div>
-
-                <div class="tips-list">
-                    <h3>📌 Полезные техники</h3>
-                    <div class="tip-item">
-                        <span>🫁</span>
-                        <p><strong>4-7-8 дыхание</strong> - вдохни на 4, задержи на 7, выдохни на 8</p>
-                    </div>
-                    <div class="tip-item">
-                        <span>🚶</span>
-                        <p><strong>Прогулка</strong> - 15 минут ходьбы отвлечёт от тяги</p>
-                    </div>
-                    <div class="tip-item">
-                        <span>🧠</span>
-                        <p><strong>Медитация</strong> - приложи руку на сердце и сосредоточься</p>
-                    </div>
-                    <div class="tip-item">
-                        <span>💪</span>
-                        <p><strong>Упражнения</strong> - 10 отжиманий или приседаний</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ВКЛАДКА 4: ИГРЫ -->
-        <div id="tabGames" class="tab-content">
-            <div class="games-container">
-                <h3>🎮 Мини-игры для отвлечения</h3>
-                
-                <div class="game-card" onclick="startCoinGame()">
-                    <span class="game-emoji">🪙</span>
-                    <h4>Монетка</h4>
-                    <p>Орёл или решка?</p>
-                </div>
-
-                <div class="game-card" onclick="startTapGame()">
-                    <span class="game-emoji">⚡</span>
-                    <h4>Тап-Мастер</h4>
-                    <p>Тапай быстрее!</p>
-                </div>
-
-                <div class="game-card" onclick="startMemoryGame()">
-                    <span class="game-emoji">🧩</span>
-                    <h4>Память</h4>
-                    <p>Найди пары</p>
-                </div>
-
-                <div class="game-card disabled">
-                    <span class="game-emoji">🎯</span>
-                    <h4>Меткость</h4>
-                    <p>Скоро...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ВКЛАДКА 5: НАСТРОЙКИ -->
-        <div id="tabSettings" class="tab-content">
-            <div class="settings-container">
-                <div class="setting-item">
-                    <label>Цена за затяжку (₽)</label>
-                    <input type="number" id="puffPrice" value="5" min="1" max="100">
-                </div>
-
-                <div class="setting-item">
-                    <label>Время затяжки (сек)</label>
-                    <input type="number" id="puffTime" value="3" min="1" max="10">
-                </div>
-
-                <div class="setting-item">
-                    <label>Уведомления</label>
-                    <input type="checkbox" id="notifications" checked>
-                </div>
-
-                <div class="setting-item">
-                    <label>Тема</label>
-                    <select id="themeSelect" onchange="changeTheme(this.value)">
-                        <option value="dark">Тёмная</option>
-                        <option value="light">Светлая</option>
-                    </select>
-                </div>
-
-                <button class="btn-secondary" onclick="resetApp()">⚠️ Сбросить всё</button>
-                <button class="btn-secondary" onclick="backToTheme()">↩️ Вернуться на начало</button>
-            </div>
-        </div>
-
-        <!-- НАВИГАЦИЯ (ВКЛАДКИ) -->
-        <div class="nav-tabs">
-            <button class="nav-btn active" data-tab="counter" onclick="switchTab('counter')">
-                <span class="nav-icon">📊</span>
-                <span class="nav-label">Счётчик</span>
-            </button>
-            <button class="nav-btn" data-tab="stats" onclick="switchTab('stats')">
-                <span class="nav-icon">📈</span>
-                <span class="nav-label">Статистика</span>
-            </button>
-            <button class="nav-btn" data-tab="advice" onclick="switchTab('advice')">
-                <span class="nav-icon">💡</span>
-                <span class="nav-label">Советы</span>
-            </button>
-            <button class="nav-btn" data-tab="games" onclick="switchTab('games')">
-                <span class="nav-icon">🎮</span>
-                <span class="nav-label">Игры</span>
-            </button>
-            <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">Настройки</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 7: ИГРА МОНЕТКА -->
-    <div id="coinGameScreen" class="screen game-overlay">
-        <div class="game-container">
-            <button class="close-game" onclick="closeCoinGame()">✕</button>
-            
-            <h2>🪙 Монетка</h2>
-            <p class="game-subtitle">Думаешь курить? Проверь свою удачу!</p>
-
-            <div class="coin-wrapper">
-                <div class="coin" id="coin">
-                    <div class="coin-face heads">
-                        <span>ОРЁЛ</span>
-                    </div>
-                    <div class="coin-face tails">
-                        <span>РЕШКА</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="coinResult" class="coin-result hidden">
-                <p id="coinResultText"></p>
-            </div>
-
-            <div class="coin-choices">
-                <button class="choice-btn" id="headsBtn" onclick="chooseCoin('heads')">
-                    <span>👑</span>
-                    <span>ОРЁЛ</span>
-                </button>
-                <button class="choice-btn" id="tailsBtn" onclick="chooseCoin('tails')">
-                    <span>🔔</span>
-                    <span>РЕШКА</span>
-                </button>
-            </div>
-
-            <button class="btn-primary" id="flipBtn" onclick="flipCoin()" style="display:none;">Подкинуть монетку</button>
-
-            <button class="btn-secondary" onclick="closeCoinGame()" style="margin-top: 20px;">Закрыть игру</button>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 8: ТАП-МАСТЕР -->
-    <div id="tapGameScreen" class="screen game-overlay">
-        <div class="game-container">
-            <button class="close-game" onclick="closeTapGame()">✕</button>
-            
-            <h2>⚡ Тап-Мастер</h2>
-            <p class="game-subtitle">Тапай по кругу столько раз, сколько можешь!</p>
-
-            <div class="tap-timer">
-                <span id="tapTime">30</span>
-            </div>
-
-            <div class="tap-circle" id="tapCircle" onclick="tapClick()"></div>
-
-            <div class="tap-score">
-                <p>Клики: <span id="tapScore">0</span></p>
-            </div>
-
-            <button class="btn-primary" id="startTapBtn" onclick="startTap()">Начать</button>
-            <button class="btn-primary" id="restartTapBtn" onclick="startTap()" style="display:none;">Ещё раз</button>
-
-            <button class="btn-secondary" onclick="closeTapGame()" style="margin-top: 20px;">Закрыть</button>
-        </div>
-    </div>
-
-    <!-- ЭКРАН 9: ПАМЯТЬ -->
-    <div id="memoryGameScreen" class="screen game-overlay">
-        <div class="game-container">
-            <button class="close-game" onclick="closeMemoryGame()">✕</button>
-            
-            <h2>🧩 Память</h2>
-            <p class="game-subtitle">Найди все пары!</p>
-
-            <div class="memory-grid" id="memoryGrid">
-                <!-- Карточки будут созданы JS -->
-            </div>
-
-            <div class="memory-stats">
-                <p>Попыток: <span id="memoryAttempts">0</span></p>
-                <p>Найдено: <span id="memoryMatches">0</span> / 8</p>
-            </div>
-
-            <button class="btn-primary" onclick="closeMemoryGame()" style="margin-top: 20px;">Закрыть</button>
-        </div>
     </div>
 
     <script src="script.js"></script>
